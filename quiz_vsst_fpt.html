@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Défi VSST – Fonction publique territoriale</title>
+<style>
+:root{--navy:#172554;--blue:#2563eb;--pale:#eff6ff;--gold:#f5c542;--ink:#172033;--muted:#64748b;--green:#15803d;--red:#b91c1c}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:linear-gradient(135deg,#e0e7ff,#f8fafc 55%,#dbeafe);color:var(--ink);min-height:100vh}
+.wrap{max-width:980px;margin:auto;padding:28px 16px 56px}.hero{background:var(--navy);color:white;border-radius:24px;padding:28px;box-shadow:0 16px 40px #17255422}
+.kicker{text-transform:uppercase;letter-spacing:.12em;font-size:.75rem;color:#bfdbfe;font-weight:800}.hero h1{font-size:clamp(2rem,5vw,3.3rem);line-height:1.05;margin:10px 0}.hero p{color:#dbeafe;max-width:680px;margin:0}
+.panel{background:white;border:1px solid #dbe3f2;border-radius:20px;padding:24px;margin-top:20px;box-shadow:0 10px 30px #1e3a8a0d}
+input[type=text]{width:100%;padding:14px 16px;border:1px solid #cbd5e1;border-radius:12px;font:inherit;margin:8px 0 14px}
+button{border:0;border-radius:12px;padding:12px 18px;font:inherit;font-weight:750;cursor:pointer;background:var(--blue);color:white}button:hover{filter:brightness(.95)}button.secondary{background:#e2e8f0;color:#172033}button:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.space{justify-content:space-between}.muted{color:var(--muted)}.hidden{display:none!important}
+.progress{height:9px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:14px 0}.bar{height:100%;width:0;background:var(--blue);transition:width .2s}
+.qmeta{font-size:.9rem;color:var(--muted);font-weight:700}.question{font-size:1.35rem;line-height:1.35;margin:14px 0 20px;font-weight:800}
+.answers{display:grid;gap:10px}.answer{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;background:#f8fafc;color:var(--ink);border:1px solid #dbe3f2;padding:15px;border-radius:14px;font-weight:600}.answer .letter{background:#dbeafe;color:#1d4ed8;border-radius:8px;padding:2px 8px;font-weight:900}.answer.selected{border:2px solid var(--blue);background:var(--pale)}.answer.correct{border:2px solid #22c55e;background:#f0fdf4}.answer.wrong{border:2px solid #ef4444;background:#fef2f2}
+.feedback{padding:13px 15px;border-radius:12px;margin-top:14px;background:#f1f5f9}.score{font-size:2.5rem;font-weight:900;color:var(--navy)}
+.podium{display:flex;align-items:end;justify-content:center;gap:10px;margin:22px auto 12px;max-width:560px}.step{flex:1;text-align:center;border-radius:14px 14px 8px 8px;padding:14px 6px 12px;background:#e2e8f0;min-width:0}.step.first{height:150px;background:#fef3c7}.step.second{height:118px;background:#e2e8f0}.step.third{height:96px;background:#ffedd5}.medal{font-size:1.7rem}.player{font-weight:850;overflow-wrap:anywhere}.points{font-size:.9rem;color:#475569}
+table{width:100%;border-collapse:collapse;margin-top:12px}th,td{text-align:left;padding:11px 8px;border-bottom:1px solid #e2e8f0}th{font-size:.8rem;text-transform:uppercase;color:var(--muted)}
+footer{font-size:.83rem;color:var(--muted);line-height:1.5;margin:18px 4px}
+@media(max-width:560px){.panel{padding:18px}.hero{padding:23px}.question{font-size:1.18rem}.podium{gap:6px}.step{padding:10px 3px}.player{font-size:.88rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+ <div class="kicker">Quiz • Formation territoriale</div>
+ <h1>Défi VSST</h1>
+ <p>Violences sexistes et sexuelles au travail – Fonction publique territoriale. Réponds aux 20 questions, marque des points et monte sur le podium !</p>
+</header>
+
+<section id="start" class="panel">
+ <h2>Prêt·e à relever le défi ?</h2>
+ <p class="muted">Entre ton nom ou un pseudo pour apparaître dans le classement de cet appareil.</p>
+ <label for="playerName"><strong>Ton nom / pseudo</strong></label>
+ <input id="playerName" type="text" maxlength="24" placeholder="Ex. : Camille" autocomplete="nickname">
+ <div class="row space"><span class="muted">20 questions • 1 point par bonne réponse</span><button id="startBtn">Commencer le quiz →</button></div>
+</section>
+
+<section id="quiz" class="panel hidden">
+ <div class="row space"><span class="qmeta" id="counter">Question 1 / 20</span><strong id="liveScore">0 point</strong></div>
+ <div class="progress"><div class="bar" id="bar"></div></div>
+ <div class="question" id="question"></div>
+ <div class="answers" id="answers"></div>
+ <div id="feedback" class="feedback hidden" aria-live="polite"></div>
+ <div class="row space" style="margin-top:18px"><span class="muted" id="instruction">Choisis une réponse.</span><button id="nextBtn" disabled>Valider</button></div>
+</section>
+
+<section id="result" class="panel hidden">
+ <div class="kicker" style="color:#2563eb">Résultat</div>
+ <h2 id="resultTitle">Bravo !</h2>
+ <div class="score" id="finalScore">0 / 20</div>
+ <p id="resultText" class="muted"></p>
+ <div class="row"><button id="saveBtn">Enregistrer mon score</button><button class="secondary" id="retryBtn">Rejouer</button></div>
+ <p class="muted" id="saveStatus"></p>
+</section>
+
+<section id="ranking" class="panel">
+ <div class="row space"><div><h2 style="margin:0">🏆 Classement & podium</h2><p class="muted" style="margin:5px 0 0">Les meilleurs scores enregistrés sur cet appareil.</p></div><button class="secondary" id="clearBtn" title="Effacer le classement">Réinitialiser</button></div>
+ <div id="podium" class="podium"><p class="muted">Le podium apparaîtra après le premier score enregistré.</p></div>
+ <table><thead><tr><th>Rang</th><th>Nom</th><th>Score</th><th>Date</th></tr></thead><tbody id="rankingBody"><tr><td colspan="4" class="muted">Aucun score pour le moment.</td></tr></tbody></table>
+</section>
+<footer>
+<strong>À savoir :</strong> ce quiz est un support pédagogique général, pas un conseil juridique. Les procédures et coordonnées de signalement dépendent de la collectivité. Pour une situation réelle, rapprochez-vous du dispositif de signalement de votre employeur, des RH, de la médecine du travail ou des autorités compétentes. Classement enregistré uniquement dans le navigateur utilisé ; il n'est pas partagé entre appareils.
+</footer>
+</div>
+<script>
+const questions = [
+{q:"Que signifie l’acronyme VSST ?",a:["Violences sexistes et sexuelles au travail","Veille sur la sécurité des services territoriaux","Violences sociales et sanitaires au travail","Vigilance sur la santé et la sécurité territoriale"],c:0,e:"VSST signifie violences sexistes et sexuelles au travail."},
+{q:"Qu’est-ce qu’un agissement sexiste au sens du Code général de la fonction publique ?",a:["Tout désaccord entre collègues","Un agissement lié au sexe qui porte atteinte à la dignité ou crée un environnement intimidant, hostile, dégradant, humiliant ou offensant","Uniquement une agression physique","Une remarque sans lien avec le sexe"],c:1,e:"La définition légale vise un agissement lié au sexe ayant l’une des atteintes ou conséquences indiquées."},
+{q:"Le harcèlement sexuel peut-il être constitué par des propos ou comportements à connotation sexuelle ou sexiste répétés ?",a:["Non, jamais","Oui","Seulement hors du temps de travail","Seulement s’il existe un contact physique"],c:1,e:"La répétition de propos ou comportements à connotation sexuelle ou sexiste peut caractériser le harcèlement sexuel, selon les critères légaux."},
+{q:"Une pression grave, même non répétée, visant à obtenir un acte de nature sexuelle peut-elle relever du harcèlement sexuel ?",a:["Oui","Non, la répétition est toujours indispensable","Seulement si elle vient d’un supérieur","Seulement si elle se déroule dans les locaux"],c:0,e:"La pression grave, même non répétée, exercée dans le but réel ou apparent d’obtenir un acte sexuel est également visée par la loi."},
+{q:"Qui doit prévenir les risques de violences sexistes et sexuelles dans une collectivité territoriale ?",a:["Uniquement la victime","Uniquement les collègues","L’employeur public, dans le cadre de son obligation de protection de la santé et de la sécurité","Personne si aucun signalement n’a été fait"],c:2,e:"L’autorité territoriale employeur doit prendre les mesures nécessaires pour protéger la santé et la sécurité des agents."},
+{q:"Un agent contractuel de la fonction publique territoriale peut-il bénéficier du dispositif de signalement ?",a:["Oui","Non, seuls les fonctionnaires titulaires sont concernés","Seulement après titularisation","Seulement s’il est cadre"],c:0,e:"Le dispositif concerne les agents publics, dont les agents contractuels."},
+{q:"Qui peut effectuer un signalement auprès du dispositif prévu par l’employeur public ?",a:["Uniquement la victime","La victime ou le témoin des faits","Uniquement le maire ou le président","Uniquement un représentant syndical"],c:1,e:"Le dispositif doit permettre le recueil des signalements des victimes et des témoins."},
+{q:"Quel est l’un des objectifs du dispositif de signalement dans la fonction publique ?",a:["Organiser une confrontation obligatoire","Recueillir les signalements, orienter et accompagner les personnes concernées","Remplacer systématiquement une plainte","Garantir automatiquement une sanction précise"],c:1,e:"Le dispositif organise le recueil, l’orientation et l’accompagnement des victimes ou témoins."},
+{q:"Une agente confie à son collègue subir des remarques sexuelles répétées. Quelle attitude est la plus adaptée ?",a:["Minimiser les faits pour éviter un conflit","Lui demander de garder le silence","L’écouter sans jugement, respecter sa parole et l’orienter vers les ressources adaptées","Mener seul une enquête et interroger toute l’équipe"],c:2,e:"Écouter sans jugement, ne pas banaliser et orienter vers les interlocuteurs compétents est une attitude adaptée."},
+{q:"La victime doit-elle obligatoirement déposer plainte pour utiliser le dispositif interne de signalement ?",a:["Oui","Non","Oui, uniquement si elle est contractuelle","Oui, après accord du supérieur"],c:1,e:"Le signalement interne et le dépôt de plainte sont deux démarches distinctes ; l’un n’est pas une condition générale de l’autre."},
+{q:"Un témoin peut-il signaler des faits même s’il n’en est pas la victime directe ?",a:["Oui","Non","Uniquement avec l’autorisation de la victime","Uniquement si les faits ont été filmés"],c:0,e:"Le dispositif de signalement est également accessible aux témoins."},
+{q:"Que doit faire un responsable informé de faits potentiellement graves ?",a:["Ne rien faire sans plainte pénale","Prendre la situation au sérieux, protéger les personnes et transmettre selon la procédure prévue","Promettre le secret absolu quelles que soient les circonstances","Confronter immédiatement les personnes devant l’équipe"],c:1,e:"Il convient d’agir selon la procédure, de préserver les personnes et de faire traiter le signalement par les interlocuteurs compétents."},
+{q:"La confidentialité des informations recueillies lors d’un signalement est-elle importante ?",a:["Oui, les informations doivent être traitées de manière confidentielle et partagées seulement selon les nécessités et règles applicables","Non, l’équipe entière doit être informée","Oui, mais uniquement pour les élus","Non, les noms doivent être affichés"],c:0,e:"La confidentialité protège les personnes et l’intégrité du traitement du signalement, dans le respect des obligations applicables."},
+{q:"Une remarque sexiste présentée comme une plaisanterie est-elle automatiquement acceptable ?",a:["Oui, si l’auteur dit qu’il plaisantait","Non, le contexte, le contenu et les effets doivent être pris en compte","Oui, entre collègues uniquement","Oui, si elle n’est pas répétée"],c:1,e:"Le fait de présenter une remarque comme une plaisanterie ne suffit pas à écarter son caractère sexiste."},
+{q:"Quelle mesure peut contribuer à prévenir les VSST dans une collectivité ?",a:["Former et sensibiliser les agents et l’encadrement","Éviter de parler du sujet","Supprimer les procédures de signalement","Laisser chaque service définir seul les sanctions"],c:0,e:"La formation et la sensibilisation font partie des actions de prévention utiles."},
+{q:"Un agent qui signale de bonne foi des faits doit-il subir des représailles pour avoir parlé ?",a:["Oui, si les faits ne sont pas encore établis","Non, les textes protègent les personnes qui signalent ou témoignent dans les conditions prévues par la loi","Oui, si le signalement concerne un supérieur","Cela dépend de son ancienneté"],c:1,e:"Les textes prévoient des protections contre les mesures défavorables liées au signalement ou au témoignage, sous les conditions légales."},
+{q:"Quel document ou dispositif permet d’identifier les risques professionnels dans une collectivité ?",a:["Le registre des congés uniquement","Le document unique d’évaluation des risques professionnels (DUERP)","Le trombinoscope du service","Le planning des réunions"],c:1,e:"Le DUERP recense et évalue les risques professionnels ; les risques de violences et de harcèlement doivent être pris en compte dans la démarche de prévention."},
+{q:"La prévention des VSST concerne-t-elle aussi les situations impliquant des usagers, élus, prestataires ou intervenants extérieurs ?",a:["Oui, les risques liés aux relations de travail et à l’activité doivent être pris en compte","Non, seuls les collègues sont concernés","Non, uniquement les agents titulaires","Uniquement en télétravail"],c:0,e:"La prévention doit considérer les risques auxquels les agents peuvent être exposés dans leur activité, y compris dans les interactions avec des tiers."},
+{q:"En cas de danger immédiat ou de menace grave, quelle priorité s’impose ?",a:["Attendre la prochaine réunion annuelle","Assurer la mise en sécurité et contacter les services d’urgence si nécessaire","Publier les faits sur les réseaux sociaux","Chercher d’abord à régler seul le conflit"],c:1,e:"La priorité est la sécurité des personnes ; les secours ou forces de l’ordre doivent être contactés si la situation l’exige."},
+{q:"Quel principe doit guider l’accueil de la parole d’une personne qui rapporte des violences ?",a:["La culpabiliser sur son comportement","Écouter avec respect, sans jugement, et ne pas promettre ce qu’on ne peut garantir","Exiger qu’elle raconte les faits devant plusieurs collègues","Décider immédiatement que les faits sont établis"],c:1,e:"L’écoute doit être respectueuse et non culpabilisante ; le traitement des faits doit ensuite suivre une procédure adaptée."}
+];
+const $=id=>document.getElementById(id);
+let player="", index=0, score=0, chosen=null, locked=false;
+function show(id){$(id).classList.remove("hidden")}
+function hide(id){$(id).classList.add("hidden")}
+function begin(){player=$("playerName").value.trim();if(!player){$("playerName").focus();return}index=0;score=0;chosen=null;locked=false;hide("start");hide("result");show("quiz");render()}
+function render(){
+ const item=questions[index];$("counter").textContent=`Question ${index+1} / ${questions.length}`;$("liveScore").textContent=`${score} point${score>1?"s":""}`;$("bar").style.width=`${index/questions.length*100}%`;$("question").textContent=item.q;$("answers").innerHTML="";$("feedback").classList.add("hidden");$("instruction").textContent="Choisis une réponse.";
+ item.a.forEach((label,i)=>{const b=document.createElement("button");b.className="answer";b.innerHTML=`<span class="letter">${"ABCD"[i]}</span><span></span>`;b.querySelector("span:last-child").textContent=label;b.onclick=()=>select(i);$("answers").appendChild(b)});
+ $("nextBtn").disabled=true;$("nextBtn").textContent="Valider";
+}
+function select(i){if(locked)return;chosen=i;[...$("answers").children].forEach((b,n)=>b.classList.toggle("selected",n===i));$("nextBtn").disabled=false}
+function validate(){if(!locked){if(chosen===null)return;locked=true;const item=questions[index],correct=chosen===item.c;if(correct)score++;[...$("answers").children].forEach((b,n)=>{b.disabled=true;if(n===item.c)b.classList.add("correct");else if(n===chosen)b.classList.add("wrong")});$("feedback").textContent=(correct?"Bonne réponse ! ":"Pas tout à fait. ")+item.e;$("feedback").classList.remove("hidden");$("instruction").textContent=`Réponse ${index+1} sur ${questions.length}`;$("nextBtn").textContent=index===questions.length-1?"Voir mon résultat":"Question suivante →";$("liveScore").textContent=`${score} point${score>1?"s":""}`;}else{index++;if(index>=questions.length)finish();else{chosen=null;locked=false;render()}}}
+function finish(){hide("quiz");show("result");$("bar").style.width="100%";$("finalScore").textContent=`${score} / ${questions.length}`;$("resultTitle").textContent=score>=16?"Excellent travail !":score>=12?"Très bon effort !":score>=8?"Continue tes révisions !":"Un bon début pour progresser !";$("resultText").textContent=`${player}, tu as obtenu ${Math.round(score/questions.length*100)} % de bonnes réponses.`;$("saveStatus").textContent="";$("saveBtn").disabled=false;window.scrollTo({top:0,behavior:"smooth"})}
+function getScores(){try{return JSON.parse(localStorage.getItem("vsstScores")||"[]")}catch{return []}}
+function save(){const list=getScores();list.push({name:player,score,date:new Date().toISOString()});list.sort((a,b)=>b.score-a.score||a.date.localeCompare(b.date));localStorage.setItem("vsstScores",JSON.stringify(list.slice(0,50)));$("saveBtn").disabled=true;$("saveStatus").textContent="Score enregistré sur cet appareil." ;drawRanking()}
+function drawRanking(){const list=getScores();const podium=$("podium");podium.innerHTML="";if(!list.length){podium.innerHTML='<p class="muted">Le podium apparaîtra après le premier score enregistré.</p>'}else{const order=[list[1],list[0],list[2]],classes=["second","first","third"],medals=["🥈","🥇","🥉"];order.forEach((p,i)=>{if(!p)return;const d=document.createElement("div");d.className="step "+classes[i];d.innerHTML=`<div class="medal">${medals[i]}</div><div class="player"></div><div class="points"></div>`;d.querySelector(".player").textContent=p.name;d.querySelector(".points").textContent=`${p.score}/20`;podium.appendChild(d)})}
+ const body=$("rankingBody");body.innerHTML="";if(!list.length){body.innerHTML='<tr><td colspan="4" class="muted">Aucun score pour le moment.</td></tr>';return}list.slice(0,10).forEach((p,i)=>{const tr=document.createElement("tr");[String(i+1),p.name,`${p.score}/20`,new Date(p.date).toLocaleDateString("fr-FR")].forEach(v=>{const td=document.createElement("td");td.textContent=v;tr.appendChild(td)});body.appendChild(tr)})}
+$("startBtn").onclick=begin;$("playerName").addEventListener("keydown",e=>{if(e.key==="Enter")begin()});$("nextBtn").onclick=validate;$("saveBtn").onclick=save;$("retryBtn").onclick=()=>{hide("result");show("start");$("playerName").value=player;window.scrollTo({top:0,behavior:"smooth"})};$("clearBtn").onclick=()=>{if(confirm("Effacer tous les scores enregistrés sur cet appareil ?")){localStorage.removeItem("vsstScores");drawRanking()}};drawRanking();
+</script>
+</body>
+</html>
